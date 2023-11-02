@@ -9,11 +9,28 @@ safeLimit = (text) => {
     return text.replace(/[^0-9\+\-\x\*\/\(\)\ ]/g, '');
 }
 
+prettyFormatTime = (time) => {
+    // 5m 30s or 30s
+    let minutes = Math.floor(time / 60);
+    let seconds = time % 60;
+    return `${minutes > 0 ? minutes + 'm ' : ''}${seconds}s`;
+}
+
 nextSpawnTime = -1;
 delay = 0;
 
-register('tick', () => {
-    
+
+register('step', () => {
+    if (nextSpawnTime > 0) nextSpawnTime--;
+
+    if (nextSpawnTime === 0){
+        Client.showTitle("&cPrimal Fear Ready!", "", 20, 40, 20);
+        nextSpawnTime = -1;
+    }
+}).setDelay(1);
+
+register("tick", () => {
+    Renderer.drawString(`&cNext spawn: &r&7${nextSpawnTime === -1 ? 'Unknown' : prettyFormatTime(nextSpawnTime)}`, 5, 5);
 });
 
 register("chat", (event) => {
